@@ -3,11 +3,13 @@ import numpy as np
 from numpy import linalg as ln
 import sys
 
-# Select columns and rows
+#Select columns and rows
+
 def filter (data, i_start, i_end, j_start, j_end):
     return [[data [i][j] for j in range(j_start,j_end)]for i in range(i_start,i_end)]
 
-# Sorting algorithm (insert sort)
+#Sorting algorithm (insert sort)
+
 def _sort (x):
     for i in range (len(x)):
         for j in range(len(x[0])-1):
@@ -23,12 +25,9 @@ def _sort (x):
                 if idx >1:
                 
                     idx=idx-1
-
-
-
     return(x)
 
-#Basic Stats
+#Basic stats
 
 def avg (x,row,col):
     return [sum(x[i])/row for i in range(col)]
@@ -49,13 +48,20 @@ def mul(xx_matrix, xy_matrix):
                 mul[i][j]+= xx_matrix[k][j]*xy_matrix[i][k]
     return(mul)
 
-#Divide matrix element by a scalar
+#Divide matrix elements by a scalar
 
 def divide(matrix,scalar):
     return[[matrix[i][j]/scalar for j in range(len(matrix[0]))] for i in range(len(matrix))]
 
+# Subtract element by element of two matrices
+
+def diff(mat_1, mat_2):
+    return [[mat_1[i][j]-mat_2[i][j] for j in range(len(mat_1[0]))] for i in range(len(mat_1))]
+
+#Printing with %8.12f numbers' format
+
 def printing (matrix):
-    print([["%8.12f" % matrix[i][j] for j in range(len(matrix[0]))] for i in range(len(matrix))])
+    print([["%8.12f" % matrix[i][j] for j in range(len(matrix[0]))]for i in range(len(matrix))])
 
 if __name__ == "__main__":
     
@@ -65,7 +71,6 @@ if __name__ == "__main__":
         print("1 argument required. Provide data file name")
         sys.exit(0)
 
-    # load the data
     data=pd.read_csv(argv[1],header= None)
     row=data.shape[0]
     col=data.shape[1]
@@ -73,11 +78,14 @@ if __name__ == "__main__":
     print("number of subjects= ", row)
     print("number of variables= ", col)
     print("")
-    # select the columns with the independent variables and build the 'x' matrix
-    _x=filter (data, 0, 3, 0, row)
-    # select the columns with the dependent variables and build the 'y' matrix
-    _y=filter (data, 3,col , 0, row)
 
+    # Select the columns with the independent variables and build the 'x' matrix
+
+    _x=filter (data, 0, 3, 0, row)
+
+    # Select the columns with the dependent variables and build the 'y' matrix
+
+    _y=filter (data, 3,col , 0, row)
 
     x_col=len(_x)
     x_row=(len(_x[0]))
@@ -92,56 +100,87 @@ if __name__ == "__main__":
     print("number of subjects= ",y_row)
     print("")
 
-    # do the transpose of 'x' and 'y' matrices
-    _xT=transpose (_x, x_col, x_row)
+    w=[]
+    t=[]
+    c=[]
+    p=[]
 
-    _yT=transpose (_y, y_col, y_row)
+    for d in range(x_col):
+        print("this is iteration n°",d)
+        
+        '''
+        print("** x matrix **"")
+        printing(_x)
+        print("** y matrix **"")
+        printing(_y)
+        '''
+        
+        # Transpose 'x' and 'y' matrices
+        _xT=transpose (_x, x_col, x_row)
+        _yT=transpose (_y, y_col, y_row)
 
-    # covariance matrix - this will be a subsequent, iterative procedure (i.e. the covariance will be computed each time with deflated 'x' and 'y' matrices
+        # Covariance matrix - computed with deflated 'x' and 'y' matrices at each iteration
+        s=mul(_xT,_y)
+        s_col=len(s)
+        s_row=(len(s[0]))
+        
+        # Transpose the 's' matrix
+        st=transpose (s, s_col, s_row)
 
-    s=mul(_xT,_y)
-    s_col=len(s)
-    s_row=(len(s[0]))
-    # transpose the 's' matrix
-    st=transpose (s, s_col, s_row)
-
-    # multiply 's' and 'st' matrices - 1st step for calculating the principal component
-    ss=mul(s,st)
-
-    # find the maximum eigenvector
-    _eig=ln.eig(ss)
-    w=[[_eig[i][j] for j in range(len(_eig[0]))] for i in range(1)]
-    print("** maximum eigenvector **")
-    printing(w)
-    print("")
-    sorted_w=_sort(w)
-    print("** maximum eigenvector sorted **")
-    printing(sorted_w)
-    print("")
+        # Multiply 's' and 'st' matrices - 1st step for calculating the principal component
+        
+        ss=mul(s,st)
+        
+        # Find the maximum eigenvector
+        _eig=ln.eig(ss)
+        tmp=[[_eig[i][j] for j in range(len(_eig[0]))] for i in range(1)]
+        print("** maximum eigenvector **")
+        printing(tmp)
+        print("")
+        tmp=_sort(tmp)
+        w.append(tmp)
+        print("** maximum eigenvector sorted **")
+        printing(w[d])
+        print("")
     
-    # T scores' column
-    t=mul(_x,sorted_w)
+        # T scores' column
+        t_tmp=mul(_x,w[d])
+        t.append(t_tmp)
+ 
+        # Transpose t
+        t_col=len(t_tmp)
+        t_row=len(t_tmp[0])
+        tt_tmp=transpose(t_tmp, t_col, t_row)
 
-    # Transpose t
-    t_col=len(t)
-    t_row=len(t[0])
-    tt=transpose(t, t_col, t_row)
+        # Compute the loading vectors 'c' and 'p'
+        tt_t=mul(tt_tmp,t_tmp)
+        xT_t=mul(_xT,t_tmp)
+        yT_t=mul(_yT,t_tmp)
+        
+        # 'p'
+        tmp=divide(xT_t,tt_t[0][0])
+        p.append(tmp)
+        pt=transpose(p[d], len(p[d]), len(p[d][0]))
+        print("** loading vector 'p' **")
+        print(p[d])
+        print("")
+        
+        # 'c'
+        tmp=divide(yT_t,tt_t[0][0])
+        c.append(tmp)
+        ct=transpose(c[d], len(c[d]), len(c[d][0]))
+        print("** loading vector 'c' **")
+        print(c[d])
+        print("")
+        
+        # Deflate '_x' and '_y'
+        t_pt=mul(t[d],pt)
+        _x=diff(_x,t_pt)
+        
+        t_ct=mul(t[d],ct)
+        _y=diff(_y,t_ct)
+        
+        d+=1
 
-    # Compute the loading vectors 'c' and 'p'
-    tt_t=mul(tt,t)
-    xT_t=mul(_xT,t)
-    yT_t=mul(_yT,t)
-
-    p=divide(xT_t,tt_t)
-    c=divide(yT_t,tt_t)
-    print("** loading vector 'p' **")
-    printing(p)
-    print("")
-    print("** loading vector 'c' **")
-    printing(c)
-    print("")
-
-    print("todo: compute the regressors matrix X+ and betas; F contrasts; do a for loop so that the code tests more than 1 component")
-
-
+    print("todo: compute the regressors matrix X+ and betas; F contrasts; ")
 
