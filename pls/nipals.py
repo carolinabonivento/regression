@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from numpy import linalg as ln
+from numpy.linalg import inv
 import sys
 
 #Select columns and rows
@@ -106,7 +107,11 @@ if __name__ == "__main__":
     p=[]
 
     for d in range(x_col):
-        print("this is iteration n°",d)
+        print("")
+        print("*******************************")
+        print("THIS IN THE ITERATION N°-->",d+1)
+        print("*******************************")
+        print("")
         
         '''
         print("** x matrix **"")
@@ -116,15 +121,18 @@ if __name__ == "__main__":
         '''
         
         # Transpose 'x' and 'y' matrices
+        
         _xT=transpose (_x, x_col, x_row)
         _yT=transpose (_y, y_col, y_row)
 
         # Covariance matrix - computed with deflated 'x' and 'y' matrices at each iteration
+        
         s=mul(_xT,_y)
         s_col=len(s)
         s_row=(len(s[0]))
         
         # Transpose the 's' matrix
+        
         st=transpose (s, s_col, s_row)
 
         # Multiply 's' and 'st' matrices - 1st step for calculating the principal component
@@ -132,6 +140,7 @@ if __name__ == "__main__":
         ss=mul(s,st)
         
         # Find the maximum eigenvector
+        
         _eig=ln.eig(ss)
         tmp=[[_eig[i][j] for j in range(len(_eig[0]))] for i in range(1)]
         print("** maximum eigenvector **")
@@ -144,20 +153,24 @@ if __name__ == "__main__":
         print("")
     
         # T scores' column
+        
         t_tmp=mul(_x,w[d])
         t.append(t_tmp)
  
         # Transpose t
+        
         t_col=len(t_tmp)
         t_row=len(t_tmp[0])
         tt_tmp=transpose(t_tmp, t_col, t_row)
 
         # Compute the loading vectors 'c' and 'p'
+        
         tt_t=mul(tt_tmp,t_tmp)
         xT_t=mul(_xT,t_tmp)
         yT_t=mul(_yT,t_tmp)
         
         # 'p'
+        
         tmp=divide(xT_t,tt_t[0][0])
         p.append(tmp)
         pt=transpose(p[d], len(p[d]), len(p[d][0]))
@@ -166,6 +179,7 @@ if __name__ == "__main__":
         print("")
         
         # 'c'
+        
         tmp=divide(yT_t,tt_t[0][0])
         c.append(tmp)
         ct=transpose(c[d], len(c[d]), len(c[d][0]))
@@ -174,6 +188,7 @@ if __name__ == "__main__":
         print("")
         
         # Deflate '_x' and '_y'
+        
         t_pt=mul(t[d],pt)
         _x=diff(_x,t_pt)
         
@@ -182,5 +197,34 @@ if __name__ == "__main__":
         
         d+=1
 
-    print("todo: compute the regressors matrix X+ and betas; F contrasts; ")
+    # Prepare P W T and tranpose
+
+    P=[p[i][j] for j in range(len(p[0])) for i in range(len(p))]
+    Pt=transpose(P,len(P),len(P[0]))
+    W=[w[i][j] for j in range(len(w[0])) for i in range(len(w))]
+    Wt=transpose(W,len(W),len(W[0]))
+    T=[t[i][j] for j in range(len(t[0])) for i in range(len(t))]
+    Tt=transpose(T,len(T),len(T[0]))
+
+    # Low-rank PLS decomposition of the input matrix X
+
+    Pt_W=mul(Pt,W)
+    inv_Pt_W=inv(Pt_W)
+    tmp=mul(W,inv_Pt_W)
+    X_pls=mul(tmp,Tt)
+
+    # Estimate regression parameters
+
+    B_pls=mul(X_pls,_y)
+    print("")
+    print("** Estimated regression parameters (Bpls) for rank= ", len(W))
+    printing(B_pls)
+    print("")
+
+    print("todo: loop for computing betas; F contrasts; ")
+
+
+
+
+
 
