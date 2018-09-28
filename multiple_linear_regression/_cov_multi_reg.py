@@ -89,11 +89,11 @@ if __name__ == "__main__":
     stdev=sd(data)
     
     
-    #covariance matrix
+    # covariance matrix
     
     covar=cov(data, mean)
-    
-    #filter columns with dependent variable
+
+    # filter columns with dependent variable
     y_col=0
     y=data[y_col]
     y=v_filter (y, y_col,1, y_col,len(data))
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     c_xy= filter (covar, i_start,i_end, j_start, j_end)
     c_xy=transpose(c_xy,len(c_xy), len(c_xy[0]))
     
-    #calculate beta - matrix product between inverse of the matrix of covariance between regressors and matrix of covariance between y and regressors
+    # do beta - matrix product between inverse of the matrix of covariance between regressors and matrix of covariance between y and regressors
     
     b=mul(i_cxx, c_xy)
     
@@ -154,14 +154,16 @@ if __name__ == "__main__":
     R2=ssr/sst
     print("R2= ", R2[0])
     
-    #degrees of freedom
+    # degrees of freedom
+    # tot df (df of the B0 condition)
     dfr=len(x[0])-1
+    # error df= n of subj - n of indip var -1
     dff=len(x[0])-(len(x)+1)
     
     # F statistic
     
     F=f_stat (R2,0, dfr, dff)
-    p_val= 1- (scipy.stats.f.cdf(F,dfr,dff))
+    p_val= 1-(scipy.stats.f.cdf(F,dfr,dff))
     print("F(",dfr,",",dff,") = ", F[0][0], "p = ", p_val[0][0])
     print("")
     
@@ -174,7 +176,7 @@ if __name__ == "__main__":
     j_end=len(x[0])
     
     x_i=filter(x,i_start,i_end, j_start, j_end)
-    
+    print("x_i= ",x_i, len(x_i[0]))
     # test effect of x1 = multi regregression - regression with only effect of x2
     # estimate expected value of y
     
@@ -208,7 +210,7 @@ if __name__ == "__main__":
     
     print("coefficients")
     print("intercept =", intercept[0][0])
-    print("betas vector = ", b_i)
+    print("betas vector = ", b_i, len(b_i))
     
     # estimate expected values of y
     
