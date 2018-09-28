@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-from numpy.linalg import inv
-import math as m
 import sys
 
 def avg (x):
