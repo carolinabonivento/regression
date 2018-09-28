@@ -299,11 +299,3 @@ if __name__ == "__main__":
             print("")
 
     d+=1
-
-#print("todo: loop for computing betas; F contrasts; ")
-    
-    
-
-
-
-
