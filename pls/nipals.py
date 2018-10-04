@@ -85,8 +85,8 @@ if __name__ == "__main__":
     
     argv=sys.argv[:]
     
-    if len(argv)<2:
-        print("1 argument required. Provide data file name")
+    if len(argv)<3:
+        print("2 arguments required. Provide data file name, starting column y")
         sys.exit(0)
 
     data=pd.read_csv(argv[1],header= None)
@@ -99,13 +99,14 @@ if __name__ == "__main__":
 
     # Select the columns with the independent variables and build the 'x' matrix
 
-    _x=filter (data, 0, 3, 0, row)
-
+    id_col=int(argv[2])
+    _x=filter (data, 0, id_col, 0, row)
+    print(_x)
     # Select the columns with the dependent variables and build the 'y' matrix
 
-    _y=filter (data, 3,col , 0, row)
+    _y=filter (data, id_col,col , 0, row)
     y_mean=avg(_y, len(_y[0]), len(_y))
-
+    print(_y)
     print("** x matrix dimension **")
     print("number of independent variables= ",len(_x))
     print("number of subjects= ",len(_x[0]))
