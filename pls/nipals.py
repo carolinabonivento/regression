@@ -101,12 +101,12 @@ if __name__ == "__main__":
 
     id_col=int(argv[2])
     _x=filter (data, 0, id_col, 0, row)
-    print(_x)
+    #print(_x)
     # Select the columns with the dependent variables and build the 'y' matrix
 
     _y=filter (data, id_col,col , 0, row)
     y_mean=avg(_y, len(_y[0]), len(_y))
-    print(_y)
+    #print(_y)
     print("** x matrix dimension **")
     print("number of independent variables= ",len(_x))
     print("number of subjects= ",len(_x[0]))
@@ -230,11 +230,11 @@ if __name__ == "__main__":
         selected_w=sel_col(W,d)
         selected_t=sel_col(T,d)
         
-        '''
+      
         print("P[",d+1,"]= ",selected_p)
         print("W[",d+1,"]= ",selected_w)
         print("T[",d+1,"]= ",selected_t)
-        '''
+      
         trans_sel_p=transpose(selected_p,len(selected_p),len(selected_p[0]))
         trans_sel_w=transpose(selected_w,len(selected_w),len(selected_w[0]))
         trans_sel_t=transpose(selected_t,len(selected_t),len(selected_t[0]))
