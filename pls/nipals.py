@@ -168,6 +168,7 @@ if __name__ == "__main__":
         w.append(tmp)
         print("** maximum eigenvector sorted **")
         printing(w[d])
+        print(type(w[d]),type(w[d][0]))
         print("")
     
         # T scores' column
@@ -259,15 +260,16 @@ if __name__ == "__main__":
         # Estimate regression parameters
         
         B_pls=mul(XX_pls,_y)
-        
+        print("PLS BETAs")
+        printing(B_pls)
         # Estimate Y (Y =XB - see Stott et al. 2017)
         
         Y_est=mul(_x,B_pls)
         Ye_mean=avg(Y_est, len(Y_est[0]), len(Y_est))
         
-        print("")
-        print("** Estimated Y (Y=X*Bpls) for rank= ", d+1)
-        print(Y_est)
+        #print("")
+        #print("** Estimated Y (Y=X*Bpls) for rank= ", d+1)
+        #printing(Y_est)
 
        
         # Test difference
