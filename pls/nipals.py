@@ -172,10 +172,11 @@ if __name__ == "__main__":
         print("")
     
         # T scores' column
-        
         t_tmp=mul(x_pls,w[d])
         t.append(t_tmp)
- 
+        print("VERIFIC T")
+        print(t)
+    
         # Transpose t
 
         tt_tmp=transpose(t_tmp, len(t_tmp), len(t_tmp[0]))

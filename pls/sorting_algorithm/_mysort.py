@@ -82,13 +82,16 @@ if __name__ == "__main__":
     printing(t_data)
     print("len x",len(t_data))
     print("check point")
+    '''
     print(t_data[0+1][1],t_data[0][1])
     if t_data[0+1][1]>t_data[0][1]:
         print(t_data[0][1])
+   
 
-
-    ss=m_sort (t_data,1)
+    print(t_data[id_col])
+    '''
+    ss=_sort (_x)
     print("m sort")
-    print(ss)
+    print(ss)>>dd.txt
     print("")
 
