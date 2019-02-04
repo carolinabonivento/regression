@@ -66,6 +66,20 @@ def mul(xx_matrix, xy_matrix):
                 mul[i][j]+= xx_matrix[k][j]*xy_matrix[i][k]
     return(mul)
 
+#Eigen vector
+
+def eigen (matrix):
+    
+    e_tmp= ln.eigh (matrix)
+    tmp=[[e_tmp[i][j] for j in range(len(e_tmp[0]))] for i in range(1)]
+    print("** maximum eigenvector - not sorted **")
+    printing(tmp)
+    print("")
+    s_tmp=_sort(tmp)
+    print("** maximum eigenvector sorted **")
+    printing (s_tmp)
+    return(s_tmp)
+
 #Divide matrix elements by a scalar
 
 def divide(matrix,scalar):
@@ -158,8 +172,8 @@ if __name__ == "__main__":
         ss=mul(s,st)
         
         # Find the maximum eigenvector
-        
-        _eig=ln.eig(ss)
+        '''
+        _eig=ln.eigh(ss)
         tmp=[[_eig[i][j] for j in range(len(_eig[0]))] for i in range(1)]
         print("** maximum eigenvector **")
         printing(tmp)
@@ -170,6 +184,10 @@ if __name__ == "__main__":
         printing(w[d])
         print(type(w[d]),type(w[d][0]))
         print("")
+        '''
+        
+        w_tmp=eigen(ss)
+        w.append(w_tmp)
     
         # T scores' column
         t_tmp=mul(x_pls,w[d])

@@ -14,6 +14,8 @@ def cov (x, md_x):
         for j in range (col):
             for k in range (row):
                 cov_xy[i][j]+=((data[i][k]-md_x[i])*(data[j][k]-md_x[j]))/(row)
+    print(i)
+    printing(cov_xy)
     return(cov_xy)
 
 def cor (cov, sd_x):
@@ -21,8 +23,13 @@ def cor (cov, sd_x):
     for i in range(col):
         for j in range (col):
             cor_xy[i][j] = cov[i][j]/(sd_x[i]*sd_x[j])
-            print("cov= ",cov[i][j],"sd i", sd_x[i], " sd k", sd_x[j],"cov/sd", cov[i][j]/(sd_x[i]*sd_x[j]))
+        #print("cov= ",cov[i][j],"sd i", sd_x[i], " sd k", sd_x[j],"cov/sd", cov[i][j]/(sd_x[i]*sd_x[j]))
+    print(i)
+    printing(cor_xy)
     return(cor_xy)
+
+def printing (matrix):
+    print([["%8.3f" % matrix[i][j] for j in range(len(matrix[0]))]for i in range(len(matrix))])
 
 
 if __name__ == "__main__":
@@ -39,13 +46,20 @@ if __name__ == "__main__":
     print("** dataset dimensions **")
     print(row)
     print(col)
+
     mean=avg(data)
+    print("AVG= ",mean)
+    print("")
     stdev=sd(data)
-    print(stdev)
-    
+    print("SD= ",stdev)
+    print("")
+
+    print("---------COVARIANCE MATRIX---------")
     covar=cov(data, mean)
-    correl=cor(covar, stdev)
+    print("")
     print("---------CORRELATION MATRIX---------")
-    print(correl)
+    correl=cor(covar, stdev)
+    print("")
+
    
 
